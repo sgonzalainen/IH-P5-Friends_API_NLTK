@@ -43,6 +43,16 @@ def get_list(item):
     return jsonify(get.list_items(item, season, episode))
 
 
+@app.route('/sentiment/character/<character>')
+def get_sentiment_char(character):
+
+    season =request.args.get('season', -1) #this is optional
+    episode =request.args.get('episode', -1) #this is optional
+
+
+    return jsonify(get.sentiment_character(character, season, episode))
+
+
 
 
 

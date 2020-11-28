@@ -1,6 +1,8 @@
 import os
 import re
 import requests
+import src.sentiment as sent
+from src.config import db, collection
 
 
 def create_scene(season, episode, episode_name = None):
@@ -99,6 +101,28 @@ def fix_person(person):
 
 
     
+def include_sentiment_score():
+
+    scenes = list(collection.find({}))
+
+    for scene in scenes:
+
+        _id = scene.get('_id')
+        
+
+        tmp_list = []
+        if isinstance(scene.get('script'),list):
+            for line in scene.get('script'):
+                string = line.get('line')
+                score = sent.analyze_sentiment(string)
+                tmp_list.append({'speaker': line.get('speaker'), 'line': line.get('line'), 'sentiment_score': score})
+
+        
+
+            collection.update_one({'_id': _id}, {'$set': {'script': tmp_list}})
+
+
+
 
 
 

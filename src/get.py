@@ -2,6 +2,8 @@ from src.config import db, collection
 from bson.objectid import ObjectId
 from random import choice
 
+import numpy as np
+
 def random_message_character(person):
 
     #this finds random scene where character attends
@@ -103,10 +105,33 @@ def list_items(item, season = -1, episode = -1):
     if item == 'scene':
         return return_scenes(season, episode)
 
+    if item == 'season':
+        return return_seasons()
+    
+    if item == 'episode':
+
+        return return_episodes(season)
 
 
 
 
+def return_seasons():
+
+    tmp_list = collection.distinct('episode.season')
+
+    return tmp_list
+
+def return_episodes(season):
+
+    tmp_list = collection.distinct('episode.number',{'episode.season': season})
+
+    try:
+        check = tmp_list[0]
+    except IndexError:
+        return f'Error. The season {season} entried does not exist. Please check API documentation for finding available seasons.'
+
+    else:
+        return tmp_list
 
 
 
@@ -159,4 +184,52 @@ def return_scenes(season, episode):
         else:
 
             return [{'scene_id': str(obj), 'season': season, 'episode': episode} for obj in list_object]
+
+
+
+def sentiment_character(person, season = -1, episode = -1):
+
+    if season == -1 and episode == -1:
+
+        matches = list(collection.find({'attendees':person}, {'script':1, '_id':0}))
+
+    elif season != -1 and episode == -1:
+
+        matches = list(collection.find({'attendees':person, 'episode.season':season}, {'script':1, '_id':0}))
+
+    else:
+
+        matches = list(collection.find({'attendees':person, 'episode.season':season, 'episode.number': episode}, {'script':1, '_id':0}))
+
+    try:
+        check = matches[0]
+
+    except IndexError:
+
+        if season == -1 and episode == -1:
+            return f'Error. The character {person} do not exist. Please check API documentation for finding available characters.'
+
+        elif season != -1 and episode == -1:
+            return f'Error. The character {person} or season {season} entried do not exist. Please check API documentation for finding available characters and seasons.'
+
+        else:
+            return f'Error. The character {person} or season {season}  or episode number {episode} entried do not exist. Please check API documentation for finding available characters, seasons and episodes.'
+
+
+    else:
+                    
+        tmp_list = []
+        for match in matches:
+            for line in match.get('script'):
+                if line.get('speaker') == person:
+                    tmp_list.append(line.get('sentiment_score'))
+                else:
+                    pass
+        
+
+        return [{'character' : person, 'sentiment_score': round(np.array(tmp_list).mean(),2)}]
+
+
+
+
 
