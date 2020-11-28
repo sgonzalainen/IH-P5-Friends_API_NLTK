@@ -55,10 +55,6 @@ def insert_line(_id, person, line):
     script = response.get('script')
 
     if isinstance(script, list):
-        for item in script:
-            if person == item['speaker'] and line == item['line']: #if True means it is already in database
-                return f'The line of {person} saying "{line}" already exists in the scene with ObjectID = {_id}'
-
         script.append(new_entry)
 
     else:

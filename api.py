@@ -1,11 +1,15 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import markdown.extensions.fenced_code
 #import src.getdata as get
 import json
 import src.post as post
+import src.get as get
+import pprint
 
 
 app =Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
+app.config['JSON_SORT_KEYS'] = False
 
 @app.route('/')
 def index():
@@ -14,19 +18,37 @@ def index():
     return md_template_string
 
 
-@app.route('/ejemplo1')
-def datitos():
-    diccionario = {'Nombre': 'Fer', 'Amigos': ['Dobby', 'Ras', 'Sheriff', 'Ignacio'], 'Edad': 28}
-
-    return diccionario
+@app.route('/line/<character>')
+def random_line(character):
+    return jsonify(get.random_message_character(person))
 
 
-@app.route('/frases/<personaje>')
-def frasepersonaje(personaje):
-    frases = get.mensajepersonaje(personaje)
+@app.route('/scene/<scene_id>')
+def get_scene(scene_id):
 
-    return json.dumps(frases)
+    season =request.args.get('season', -1) #this is optional
+    episode =request.args.get('episode', -1) #this is optional
+    limit =request.args.get('limit', 1) #this is optional
 
+
+    return jsonify(get.scene(scene_id, season, episode, limit))
+
+@app.route('/list/<item>')
+def get_list(item):
+
+    season =request.args.get('season', -1) #this is optional
+    episode =request.args.get('episode', -1) #this is optional
+
+
+    return jsonify(get.list_items(item, season, episode))
+
+
+
+
+
+
+
+##################### POST  ENDPOINTS  ##########################################################
 
 @app.route('/newscene', methods=['POST'])
 def post_scene():
@@ -61,6 +83,7 @@ def post_person():
     check = post.insert_person(_id, person)
 
     return check
+
 
 @app.route('/newline', methods=['POST'])
 def post_line():
