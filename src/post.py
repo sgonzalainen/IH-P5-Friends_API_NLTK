@@ -34,7 +34,7 @@ def insert_person(_id, person):
 
     collection.update_one({'_id': ObjectId(_id)}, {'$set': {'attendees': attendees}})
 
-    return f'New person was succesfully inserted to scene with ObjectID = {_id}'
+    return f'{person} was succesfully inserted to scene with ObjectID = {_id}'
 
 
 def insert_line(_id, person, line):

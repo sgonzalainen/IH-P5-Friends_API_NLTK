@@ -23,7 +23,7 @@ def create_scene(season, episode, episode_name = None):
 def insert_person(_id, person):
     
     params= {'id':_id, 'person':person}
-    endpoint = 'http://localhost:5000/newperson'
+    endpoint = 'http://localhost:5000/addperson'
     
     r = requests.post(endpoint, params = params)
     response = r.text
@@ -33,7 +33,7 @@ def insert_person(_id, person):
 def insert_line(_id, person, line):
     
     params= {'id':_id, 'person': person,'line': line}
-    endpoint = 'http://localhost:5000/newline'
+    endpoint = 'http://localhost:5000/addline'
     
     r = requests.post(endpoint, params = params)
     response = r.text
@@ -102,19 +102,26 @@ def fix_person(person):
 
     
 def include_sentiment_score():
-
+    
     scenes = list(collection.find({}))
+
 
     for scene in scenes:
 
         _id = scene.get('_id')
+        
         
 
         tmp_list = []
         if isinstance(scene.get('script'),list):
             for line in scene.get('script'):
                 string = line.get('line')
-                score = sent.analyze_sentiment(string)
+
+                tokens = sent.remove_symbols(string) #remove symbols
+                clean_string = ' '.join(sent.remove_stop_words(tokens))
+
+                score = round(sent.analyze_sentiment_blob(clean_string),3)
+                print(string, score)
                 tmp_list.append({'speaker': line.get('speaker'), 'line': line.get('line'), 'sentiment_score': score})
 
         

@@ -58,7 +58,7 @@ def scene(scene_id, season = -1, episode = -1, limit = 1):
         
             scene = list(collection.aggregate([
             { '$match': {'$and': [{ 'episode.season': season }, {'episode.number': episode}] }},
-            { '$sample': { 'size': 1 } }]))
+            { '$sample': { 'size': int(limit) } }]))
 
             try:
                 check = scene[0]
@@ -111,6 +111,9 @@ def list_items(item, season = -1, episode = -1):
     if item == 'episode':
 
         return return_episodes(season)
+
+    else: 
+        return f'Error. The item {item} entried is not correct. Please check API documentation for available items.'
 
 
 
@@ -190,16 +193,15 @@ def return_scenes(season, episode):
 def sentiment_character(person, season = -1, episode = -1):
 
     if season == -1 and episode == -1:
-
         matches = list(collection.find({'attendees':person}, {'script':1, '_id':0}))
 
     elif season != -1 and episode == -1:
-
         matches = list(collection.find({'attendees':person, 'episode.season':season}, {'script':1, '_id':0}))
 
     else:
-
         matches = list(collection.find({'attendees':person, 'episode.season':season, 'episode.number': episode}, {'script':1, '_id':0}))
+
+   
 
     try:
         check = matches[0]
@@ -228,6 +230,35 @@ def sentiment_character(person, season = -1, episode = -1):
         
 
         return [{'character' : person, 'sentiment_score': round(np.array(tmp_list).mean(),2)}]
+
+def sentiment_episode(season, episode):
+
+    match = list(collection.find({ 'episode.season': season, 'episode.number': episode}))
+    try:
+        check = match[0]
+    except IndexError:
+        return f'Error. The season {season},  episode {episode} entried does not exist. Please check API documentation for finding available seasons and episodes.'
+
+    else:
+        tmp_list = []
+        for scene in match:
+            
+            
+            mean_scene = np.mean([line.get('sentiment_score') for line in scene.get('script')])
+
+            tmp_list.append(mean_scene)
+
+        
+    final_score = round(np.mean(tmp_list),3)
+    
+    return [{'season': season, 'episode': episode, 'sentiment_score': final_score}]
+
+
+
+
+
+
+
 
 
 
