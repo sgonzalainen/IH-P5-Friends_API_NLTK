@@ -27,18 +27,25 @@ def random_message_character(person):
 
 def scene(scene_id, season = -1, episode = -1, limit = 1):
 
-    limit = 10 if int(limit) > 10 else limit
+    try:
+        check = int(limit)
+        if check < 0:
+            return 'Error. Wrong limit value. Please provide positive integer'
+    except:
+        return 'Error. Wrong limit value. Please provide positive integer'
+    else:
+        limit = 10 if int(limit) > 10 else limit
 
 
     if scene_id == 'random':
 
-        if season == -1:
+        if season == -1 and episode == -1:
             scene = list(collection.aggregate([
                 { '$sample': { 'size': int(limit) } }]))
             scene = jsonize(scene)
 
             return scene
-        elif episode == -1:
+        elif season != -1 and episode == -1:
 
             scene = list(collection.aggregate([
             { '$match': { 'episode.season': season } },
@@ -54,7 +61,7 @@ def scene(scene_id, season = -1, episode = -1, limit = 1):
                 return scene
 
                 
-        else:
+        elif season != -1 and episode != -1:
         
             scene = list(collection.aggregate([
             { '$match': {'$and': [{ 'episode.season': season }, {'episode.number': episode}] }},
@@ -68,6 +75,8 @@ def scene(scene_id, season = -1, episode = -1, limit = 1):
             else:
                 scene = jsonize(scene)
                 return scene
+        else:
+            return f'Error. You have specified an episode without a season.'
 
     else:
         try:

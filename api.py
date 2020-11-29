@@ -61,7 +61,7 @@ def get_sentiment_episode():
         episode = request.args['episode']
     
     except:
-        return 'Error. Missing a required parameter. Please check API documentation.'
+        return jsonify('Error. Missing a required parameter. Please check API documentation.')
 
 
     return jsonify(get.sentiment_episode(season, episode))

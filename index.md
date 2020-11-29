@@ -210,7 +210,7 @@ Retrieves a whole scene.
 - Query Parameters: 
     - season (optional) : for filtering to a specific season (This only applies if 'random' scene_id is provided.)
     - episode (optional) : for filtering to a specific episode of a season (This only applies if 'random' scene_id is provided and when season is also specified.)
-    - limit (optional): limit number of cases. By default = 1.
+    - limit (optional, integer): limit number of cases. By default = 1. Max limit = 10. If exceeded, it will return only 10.
 
 - Response: 
     - On success (example):
