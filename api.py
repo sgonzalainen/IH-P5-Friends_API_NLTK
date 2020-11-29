@@ -16,6 +16,8 @@ def index():
     return md_template_string
 
 
+#################################### GET METHODS ####################################################
+
 @app.route('/line/<character>')
 def random_line(character):
     return jsonify(get.random_message_character(character))
@@ -67,9 +69,6 @@ def get_sentiment_episode():
 
 
 
-
-
-
 ##################### POST  ENDPOINTS  ##########################################################
 
 @app.route('/newscene', methods=['POST'])
@@ -79,8 +78,8 @@ def post_scene():
         season = request.args['season']
         episode = request.args['episode']
         episode_name =request.args.get('episode_name') #this is optional
-        check = int(season)
-        check = int(episode)
+        check = int(season) #should insert an integer
+        check = int(episode) #should insert integer
 
     except:
         return jsonify('Error. Missing a required parameter. Please check API documentation.')

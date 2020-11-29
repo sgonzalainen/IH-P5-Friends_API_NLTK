@@ -8,6 +8,15 @@ from textblob import TextBlob
 
 
 def remove_symbols(text):
+    '''
+    Function to remove symbols from text
+    Args:
+        text(str): text
+    
+    Returns:
+        tokens(list): list of words without symbols
+
+    '''
 
     words = nltk.word_tokenize(text)
     tokenizer = RegexpTokenizer(r'\w+')
@@ -15,6 +24,15 @@ def remove_symbols(text):
     return tokens
 
 def remove_stop_words(tokens):
+    '''
+    Remove stop words in English
+    Args:
+        tokens(list): list of words
+
+    Returns:
+        tokens_clean(list): list of words without stop words
+
+    '''
 
     stop_words = set(stopwords.words('english'))
     tokens_clean = [e for e in tokens if e not in stop_words]
@@ -22,24 +40,16 @@ def remove_stop_words(tokens):
     return tokens_clean
 
 
-
-def analyze_sentiment(text):
-
-    sia = SentimentIntensityAnalyzer()
-    polarity = sia.polarity_scores(text)
-    pol = polarity['compound']
-
-    return pol
-
-
-## Not in useeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-def calculate_sentiment(mylist):
-
-    tmp_list = [analyze_sentiment(item) for item in mylist]
-
-    return round(np.array(tmp_list).mean(),2)
-
 def analyze_sentiment_blob(text):
+    '''
+    Gets polarity score given a text
+    Args:
+        text(str): text
+
+    Returns:
+        polarity score from blobtext 
+
+    '''
 
     en_blob=TextBlob(u'{}'.format(text))
 

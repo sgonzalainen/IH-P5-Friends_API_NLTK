@@ -71,7 +71,7 @@ def get_sentiment_recurrent_char(number):
     
     return score_list
 
-def get_sentiment_main_chars_per_episode(**main_characters):
+def get_sentiment_main_chars_per_episode(*main_characters):
     '''
     Get sentiment scores of main characters of friends per episode
     Args:
@@ -82,8 +82,6 @@ def get_sentiment_main_chars_per_episode(**main_characters):
 
     '''
 
-
-    
     endpoint = 'http://localhost:5000/list/season'
     seasons = requests.get(endpoint).json()
     seasons = sorted(seasons, key = lambda x: int(x))
