@@ -20,21 +20,26 @@ def insert_scene(season, episode, episode_name = None):
 
 def insert_person(_id, person):
 
-
-    response = collection.find_one({'_id': ObjectId(_id)},{'attendees': 1})
-    attendees = response.get('attendees')
-
-    if attendees is None:
-        attendees =[person]
-    elif person in attendees:
-        return f'{person} is already as attendee in the scene with ObjectID = {_id}'
-
+    try:
+        response = collection.find_one({'_id': ObjectId(_id)},{'attendees': 1})
+        check = response['attendees']
+    except:
+        return f'{_id} is an invalid id'
     else:
-        attendees.append(person)
 
-    collection.update_one({'_id': ObjectId(_id)}, {'$set': {'attendees': attendees}})
+        attendees = response.get('attendees')
 
-    return f'{person} was succesfully inserted to scene with ObjectID = {_id}'
+        if attendees is None:
+            attendees =[person]
+        elif person in attendees:
+            return f'{person} is already as attendee in the scene with ObjectID = {_id}'
+
+        else:
+            attendees.append(person)
+
+        collection.update_one({'_id': ObjectId(_id)}, {'$set': {'attendees': attendees}})
+
+        return f'{person} was succesfully inserted to scene with ObjectID = {_id}'
 
 
 def insert_line(_id, person, line):
@@ -42,26 +47,33 @@ def insert_line(_id, person, line):
     new_entry = {'speaker': person, 'line': line}
 
     #if person is not as attendee, it cannot be inserted
-    response = collection.find_one({'_id': ObjectId(_id)},{'attendees': 1})
-    attendees = response.get('attendees')
 
-    if isinstance(attendees, list) and person in attendees:
-        pass
+    try:
+        response = collection.find_one({'_id': ObjectId(_id)},{'attendees': 1})
+        check = response['attendees']
+    except:
+        return f'{_id} is an invalid id'
     else:
-        return f'Line of {person} saying "{line}" could not be inserted because {person} is not listed as attendee.\nPlease ensure the character is as attendee first'
 
-    #After checking, person is in attendees list now check if same line already exists
-    response = collection.find_one({'_id': ObjectId(_id)},{'script': 1})
-    script = response.get('script')
+        attendees = response.get('attendees')
 
-    if isinstance(script, list):
-        script.append(new_entry)
+        if isinstance(attendees, list) and person in attendees:
+            pass
+        else:
+            return f'Line of {person} saying "{line}" could not be inserted because {person} is not listed as attendee. Please ensure the character is as attendee first'
 
-    else:
-        script = [new_entry]
+        #After checking, person is in attendees list now check if same line already exists
+        response = collection.find_one({'_id': ObjectId(_id)},{'script': 1})
+        script = response.get('script')
 
-    collection.update_one({'_id': ObjectId(_id)}, {'$set': {'script': script}})
+        if isinstance(script, list):
+            script.append(new_entry)
 
-    return f'{person} saying "{line}" was succesfully inserted to scene with ObjectID = {_id}'
+        else:
+            script = [new_entry]
+
+        collection.update_one({'_id': ObjectId(_id)}, {'$set': {'script': script}})
+
+        return f'{person} saying "{line}" was succesfully inserted to scene with ObjectID = {_id}'
 
 

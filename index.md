@@ -47,7 +47,7 @@ It includes a character into Attendee field  of a scene (i.e. a MongoDB document
 
 It includes a script line into script field of a scene (i.e. a MongoDB document). Warning, character must be inserted into Attendees field in advance.
 
-- Endpoint : http://localhost:5000/addcharacter
+- Endpoint : http://localhost:5000/addline
 - Query Parameters: 
     - id (required) : scene ObjectId
     - character (required) : name of character

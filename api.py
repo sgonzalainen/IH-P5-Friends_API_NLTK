@@ -89,24 +89,24 @@ def post_scene():
         episode_name =request.args.get('episode_name') #this is optional
 
     except:
-        return 'Error. Missing a required parameter. Please check API documentation.'
+        return jsonify('Error. Missing a required parameter. Please check API documentation.')
 
     inserted_id = post.insert_scene(season, episode, episode_name)
 
-    return f'New scene was succesfully created, with ObjectID = {inserted_id}'
+    return jsonify(f'New scene was succesfully created, with ObjectID = {inserted_id}')
 
 @app.route('/addcharacter', methods=['POST'])
 def post_person():
     try:
         _id = request.args['id']
-        person = request.args['character']
+        character = request.args['character']
 
     except:
-        return 'Error. Missing a required parameter. Please check API documentation.'
+        return jsonify('Error. Missing a required parameter. Please check API documentation.')
 
     check = post.insert_person(_id, character)
 
-    return check
+    return jsonify(check)
 
 
 @app.route('/addline', methods=['POST'])
@@ -117,11 +117,11 @@ def post_line():
         line = request.args['line']
 
     except:
-        return 'Error. Missing a required parameter. Please check API documentation.'
+        return jsonify('Error. Missing a required parameter. Please check API documentation.')
 
     check = post.insert_line(_id, person, line)
 
-    return check
+    return jsonify(check)
 
 
 
