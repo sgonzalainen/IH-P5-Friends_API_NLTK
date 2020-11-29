@@ -1,10 +1,8 @@
 from flask import Flask, request, jsonify
 import markdown.extensions.fenced_code
-#import src.getdata as get
 import json
 import src.post as post
 import src.get as get
-import pprint
 
 
 app =Flask(__name__)
@@ -76,17 +74,13 @@ def get_sentiment_episode():
 
 @app.route('/newscene', methods=['POST'])
 def post_scene():
-    '''
-    Post method to create a new scene (document) to database.
-    Args:
-
-
-    '''
 
     try:
         season = request.args['season']
         episode = request.args['episode']
         episode_name =request.args.get('episode_name') #this is optional
+        check = int(season)
+        check = int(episode)
 
     except:
         return jsonify('Error. Missing a required parameter. Please check API documentation.')

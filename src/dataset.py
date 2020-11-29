@@ -6,6 +6,18 @@ from src.config import db, collection
 
 
 def create_scene(season, episode, episode_name = None):
+
+    '''
+    Function to create a scene, MongoDB document from Kaggle dataset
+    Args:
+        season(str): season number
+        episode(str): episode number
+        episode_name (str): name of episode
+
+    Returns:
+        inserted_id(str): ObjectID number MongoDb document
+
+    '''
     
     
     params= {'season':season, 'episode':episode, 'episode_name': episode_name}
@@ -21,6 +33,15 @@ def create_scene(season, episode, episode_name = None):
     return inserted_id
 
 def insert_person(_id, person):
+    '''
+    Includes a character as atendee in attendees field of a MongoDB document from Kaggle dataset
+    Args:
+        _id(str): ObjectID number MongoDb document
+        person(str): character name
+
+    Returns:
+        
+    '''
     
     params= {'id':_id, 'person':person}
     endpoint = 'http://localhost:5000/addperson'
@@ -31,6 +52,17 @@ def insert_person(_id, person):
 
 
 def insert_line(_id, person, line):
+    '''
+    Includes a script line in script field of a MongoDB document from Kaggle dataset
+    Args:
+        _id(str): ObjectID number MongoDb document
+        person(str): character name
+        line(str): script line
+
+    Returns: 
+
+    '''
+
     
     params= {'id':_id, 'person': person,'line': line}
     endpoint = 'http://localhost:5000/addline'
@@ -41,6 +73,17 @@ def insert_line(_id, person, line):
 
 
 def new_line_hanlder(_id, match, attendees):
+    '''
+    Given a match a new script line in txt file, finds person and line to insert to collection.
+    Args:
+        _id(str): ObjectID number MongoDb document
+        match(regex match)
+        attendees(list): list of attendees(field) in a Mongodb document
+
+    Returns:
+        attendees(list): updated list of attendees(field) in a Mongodb document after new line insertion.
+
+    '''
     
     person = match[1].capitalize()
     person = fix_person(person)
@@ -58,6 +101,14 @@ def new_line_hanlder(_id, match, attendees):
 
 
 def scrape_dataset(path):
+    '''
+    Main function to call to scrape Kaggle dataset txt files and insert to Mongodb collection
+    Args:
+        path(str): path to txt files
+
+    Returns:
+
+    '''
 
     
     files = sorted(os.listdir(path))
@@ -86,6 +137,16 @@ def scrape_dataset(path):
 
 
 def fix_person(person):
+    '''
+    Mini function to fix typing mistakes in main characters
+    Args:
+        person(str): character name
+
+    Returns:
+        person(str): fixed character name
+
+
+    '''
 
     if person == 'Chandlers' or person == 'Chan':
         return 'Chandler'
@@ -102,15 +163,19 @@ def fix_person(person):
 
     
 def include_sentiment_score():
+    '''
+    Function to call to include sentiment score in all documents of a MongoDB collection.
+    Args:
+
+    Returns:
+
+    '''
     
     scenes = list(collection.find({}))
-
 
     for scene in scenes:
 
         _id = scene.get('_id')
-        
-        
 
         tmp_list = []
         if isinstance(scene.get('script'),list):
@@ -126,7 +191,7 @@ def include_sentiment_score():
 
         
 
-            collection.update_one({'_id': _id}, {'$set': {'script': tmp_list}})
+            collection.update_one({'_id': _id}, {'$set': {'script': tmp_list}}) #updates document once all lines have been scored
 
 
 

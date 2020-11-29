@@ -1,12 +1,17 @@
 from src.config import db, collection
 from bson.objectid import ObjectId
 from random import choice
-
 import numpy as np
 
 def random_message_character(person):
+    '''
+    Finds a random script line in all documents of the MongoDb collection
+    Args:
+        person(str): character name
+    Returns:
+        tmp_list(list): list containing a dictionary with script line
 
-    #this finds random scene where character attends
+    '''
     
     try:
         scene = list(collection.aggregate([
@@ -26,6 +31,18 @@ def random_message_character(person):
 
 
 def scene(scene_id, season = -1, episode = -1, limit = 1):
+    '''
+    Based on parameters, finds a scene (MongoDB document) from MongoDB collection
+    Args:
+        scene_id(str): ObjectID number from a MongoDB document or 'random'
+        season(str): season number, for random option
+        episode(str): episode number, for random option
+        limit(int): number of occurrences for random option
+
+    Returns:
+        scene(list) or Error message
+
+    '''
 
     try:
         check = int(limit)
@@ -91,6 +108,15 @@ def scene(scene_id, season = -1, episode = -1, limit = 1):
 
 
 def jsonize(my_list):
+    '''
+    Auxiliary function to convert ObjectID of documents to string for return in json file.
+    Args:
+        my_list(list): list of MongoDB documents
+    
+    Returns:
+        tmp_list(list): json-friendly list of documents
+
+    '''
 
     tmp_list = []
 
@@ -106,6 +132,18 @@ def jsonize(my_list):
 
 
 def list_items(item, season = -1, episode = -1):
+
+    '''
+    Main function to handle list get method
+    Args:
+        item(str): type of list to return
+        season(str): season number
+        episode(str): episode number
+
+    Returns:
+        Queried list or error message
+
+    '''
 
 
     if item == 'character':
@@ -128,12 +166,28 @@ def list_items(item, season = -1, episode = -1):
 
 
 def return_seasons():
+    '''
+    Auxiliary function for returning list of seasons.
+
+    Returns:
+        tmp_list(list): list of seasons
+
+    '''
 
     tmp_list = collection.distinct('episode.season')
 
     return tmp_list
 
 def return_episodes(season):
+    '''
+    Auxiliary function for returning list of episodes given a season.
+    Args:
+        season(str): season number
+
+    Returns:
+        tmp_list(list): list of episodes or error message
+
+    '''
 
     tmp_list = collection.distinct('episode.number',{'episode.season': season})
 
@@ -148,6 +202,17 @@ def return_episodes(season):
 
 
 def return_characters(season = -1, episode = -1):
+    '''
+    Auxiliary function for returning list of characters.
+    Args:
+        season(str): season number, optional.
+        episode(str): episode number, optional.
+        
+
+    Returns:
+        tmp_list(list): list of episodes or error message.
+
+    '''
 
     if season == -1:
         tmp_list = collection.distinct('attendees')
@@ -180,6 +245,17 @@ def return_characters(season = -1, episode = -1):
 
 
 def return_scenes(season, episode):
+    '''
+    Auxiliary function for returning list of scenes.
+    Args:
+        season(str): season number
+        episode(str): episode number
+        
+
+    Returns:
+        list of scenes or error message.
+
+    '''
 
     if season == -1 or episode == -1:
 
@@ -200,6 +276,17 @@ def return_scenes(season, episode):
 
 
 def sentiment_character(person, season = -1, episode = -1):
+    '''
+    Retrieves from collection, the sentiment score of a character.
+    Args:
+        person(str): character name
+        season(str): season number, optional
+        episode(str): episode number, optional
+    
+    Returns:
+        List containing dictionary with information or error message
+
+    '''
 
     if season == -1 and episode == -1:
         matches = list(collection.find({'attendees':person}, {'script':1, '_id':0}))
@@ -238,9 +325,19 @@ def sentiment_character(person, season = -1, episode = -1):
                     pass
         
 
-        return [{'character' : person, 'sentiment_score': round(np.array(tmp_list).mean(),2)}]
+        return [{'character' : person, 'sentiment_score': round(np.array(tmp_list).mean(),3)}]
 
 def sentiment_episode(season, episode):
+    '''
+    Retrieves from collection, the sentiment score of a episode.
+    Args:
+        season(str): season number
+        episode(str): episode number
+    
+    Returns:
+        List containing dictionary with information or error message
+
+    '''
 
     match = list(collection.find({ 'episode.season': season, 'episode.number': episode}))
     try:

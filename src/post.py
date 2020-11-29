@@ -2,10 +2,16 @@ from src.config import db, collection
 from bson.objectid import ObjectId
 
 def insert_scene(season, episode, episode_name = None):
-    
+    '''
+    Creates a new document to MongoDb collection
+    Args:
+        season(str): number of season.
+        episode(str): episode number
+        episode_name (str): name of episode
+    Returns:
+        inserted_id(str): ObjectID number MongoDb document
 
-
-
+    '''
 
     dict_insert = {'episode':{'season': f'{season}', 
     'number':f'{episode}',
@@ -19,6 +25,15 @@ def insert_scene(season, episode, episode_name = None):
 
 
 def insert_person(_id, person):
+    '''
+    Includes a character as atendee in attendees field of a MongoDB document
+    Args:
+        _id(str): ObjectID number MongoDb document
+        person(str): character name
+    Return:
+        Sucess or error message
+
+    '''
 
     try:
         response = collection.find_one({'_id': ObjectId(_id)},{'attendees': 1})
@@ -43,6 +58,17 @@ def insert_person(_id, person):
 
 
 def insert_line(_id, person, line):
+    '''
+    Includes a script line in script field of a MongoDB document
+    Args:
+        _id(str): ObjectID number MongoDb document
+        person(str): character name
+        line(str): script line
+    Return:
+        Sucess or error message
+
+
+    '''
 
     new_entry = {'speaker': person, 'line': line}
 
