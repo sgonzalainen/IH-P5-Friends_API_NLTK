@@ -105,14 +105,14 @@ Chandler: Wow, what a geek. They spent $69.95 on a Wonder Mop.
 * `notebooks`:
 
     * `requests.ipynb`: notebook where it is shown how all endpoints works via requests methods (along with some error tests).
-    * `stats.ipynb`: practice use of the API. Notebook containing several data insights from API calls.
+    * `stats.ipynb`: practical use of the API. Notebook containing several data insights from API calls.
 * `src`:
 
     * `config.py`: configuration file with the connection to MongoDB database.
     * `post.py`: auxiliary functions for POST methods.
     * `get.py`: auxiliary functions for GET methods.
     * `dataset.py`: functions to scrape the Kaggle dataset. Use of this functions not included in the notebooks on this repo.
-    * `sentiment.py` : auxiliary functions for sentiment score analysis.
+    * `sentiment.py` : auxiliary functions for sentiment score analysis. Sentiment score run outside scope of API.
     * `stats.py`: auxiliary functions for insights in stats.ipynb . 
 * `img`: folder containing gifs and pictures inserted in markdown files and notebooks. 
 
